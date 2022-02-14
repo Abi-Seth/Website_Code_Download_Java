@@ -12,6 +12,7 @@ public class DownloadLink {
     private static FilterOutUnwantedKeyword filterout = new FilterOutUnwantedKeyword();
     private static GetFileSize getfilesize = new GetFileSize();
     private static FinalNavigationDownload finaldownload = new FinalNavigationDownload();
+    private static StoreAllClonedSites storeDataInDb = new StoreAllClonedSites();
 
     public static void downloadSiteNavigationPages(String[] webLinks, String baseUrl) throws IOException {
         try {
@@ -23,6 +24,11 @@ public class DownloadLink {
 
                 Integer filesize = getfilesize.getFileSize(new URL(baseUrl+"/"+webLinks[i].split("\"")[0]));
                 finaldownload.DownloadANavigationLink(webLinks[i], filesize, baseUrl);
+                try {
+                    storeDataInDb.storeIntoDatabase(baseUrl);
+                } catch (Exception error) {
+                    MessageHandler.printConsoleMessage(OutputMessageTypes.ERROR, error.getMessage());
+                }
             }
 
             MessageHandler.printConsoleMessage(OutputMessageTypes.SUCCESS, "### Download complete ###");
